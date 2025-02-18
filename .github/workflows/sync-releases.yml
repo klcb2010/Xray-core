@@ -19,6 +19,9 @@ jobs:
         git config user.name "klcb2010"
         git config user.email "klcb2010@gmail.com"
 
+    - name: Set up GitHub Token
+      run: echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
     - name: Fetch latest release from Xray-core
       run: |
         # 获取最新发布标签的下载链接
