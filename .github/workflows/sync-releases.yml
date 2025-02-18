@@ -23,19 +23,24 @@ jobs:
       run: |
         curl -s https://api.github.com/repos/XTLS/Xray-core/releases | jq -r '.[].tag_name' > releases.txt
 
-    - name: Add new releases to the repository
+    - name: Download release assets
       run: |
         mkdir -p releases
         while IFS= read -r tag; do
           echo "Fetching release: $tag"
-          # 下载与标签相关的发布内容
-          # 这里以 tag 名为文件夹名称，在 releases 文件夹中存储该版本的文件
-          curl -L -o "./releases/$tag.zip" "https://github.com/XTLS/Xray-core/archive/refs/tags/$tag.zip"
+          # 获取该标签的所有资产
+          assets=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/tags/$tag | jq -r '.assets[].browser_download_url')
+          
+          # 下载每个资产并保存在 releases 目录下
+          for asset in $assets; do
+            echo "Downloading $asset"
+            curl -L -o "./releases/$(basename $asset)" "$asset"
+          done
         done < releases.txt
 
     - name: Commit and push new releases
       run: |
-        git add releases/ releases.txt  # 确保将 releases.txt 文件也添加到暂存区
+        git add releases/ releases.txt  # 确保将下载的文件和 releases.txt 添加到暂存区
         git status  # 输出当前状态，确保有文件被添加
         git commit -m "Sync latest Xray releases"
         git push origin main  # 如果你有不同的分支，修改为对应的分支
