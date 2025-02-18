@@ -14,6 +14,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Set up Git
+      run: |
+        git config user.name "klcb2010"
+        git config user.email "klcb2010@gmail.com"
+
     - name: Fetch releases from Xray-core
       run: |
         curl -s https://api.github.com/repos/XTLS/Xray-core/releases | jq -r '.[].assets[].browser_download_url' > releases.txt
@@ -23,11 +28,4 @@ jobs:
         while IFS= read -r line; do
           echo "New release: $line"
           # 将发布内容下载并保存到你的仓库中（例如存储在 releases 目录下）
-          wget -P ./releases/ "$line"
-        done < releases.txt
-
-    - name: Commit and push new releases
-      run: |
-        git add releases/
-        git commit -m "Sync latest Xray releases"
-        git push origin main  # 如果你有不同的分支，修改为对应的分支
+          wget -P ./re
