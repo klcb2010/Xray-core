@@ -1,0 +1,33 @@
+name: Sync Xray Releases
+
+on:
+  schedule:
+    # 每天一次同步
+    - cron: "0 0 * * *"  # 可以根据需要调整时间
+  workflow_dispatch: # 支持手动触发工作流
+
+jobs:
+  sync-releases:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Fetch releases from Xray-core
+      run: |
+        curl -s https://api.github.com/repos/XTLS/Xray-core/releases | jq -r '.[].assets[].browser_download_url' > releases.txt
+
+    - name: Add new releases to the repository
+      run: |
+        while IFS= read -r line; do
+          echo "New release: $line"
+          # 将发布内容下载并保存到你的仓库中（例如存储在 releases 目录下）
+          wget -P ./releases/ "$line"
+        done < releases.txt
+
+    - name: Commit and push new releases
+      run: |
+        git add releases/
+        git commit -m "Sync latest Xray releases"
+        git push origin main  # 如果你有不同的分支，修改为对应的分支
