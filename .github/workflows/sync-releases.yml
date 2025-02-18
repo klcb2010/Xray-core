@@ -39,15 +39,13 @@ jobs:
           # 创建发布（release）
           release_response=$(curl -s -X POST https://api.github.com/repos/klcb2010/Xray-core/releases \
             -H "Authorization: token $GITHUB_TOKEN" \
-            -d @- <<EOF
-            {
-              "tag_name": "$tag",
-              "name": "Release $tag",
-              "body": "This is the release for version $tag",
-              "draft": false,
-              "prerelease": false
-            }
-EOF
+            -d "{
+              \"tag_name\": \"$tag\",
+              \"name\": \"Release $tag\",
+              \"body\": \"This is the release for version $tag\",
+              \"draft\": false,
+              \"prerelease\": false
+            }"
           )
           
           # 获取发布的 ID
