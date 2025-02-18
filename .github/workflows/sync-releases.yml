@@ -35,6 +35,7 @@ jobs:
 
     - name: Commit and push new releases
       run: |
-        git add releases/
+        git add releases/ releases.txt  # 确保将 releases.txt 文件也添加到暂存区
+        git status  # 输出当前状态，确保有文件被添加
         git commit -m "Sync latest Xray releases"
         git push origin main  # 如果你有不同的分支，修改为对应的分支
